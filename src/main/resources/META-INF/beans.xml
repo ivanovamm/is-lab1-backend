@@ -4,4 +4,8 @@
        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_3_0.xsd"
        bean-discovery-mode="annotated">
 
+<!--    <alternatives>-->
+<!--        <class>com.example.islab1new.security.CustomAuthenticationMechanism</class>-->
+<!--    </alternatives>-->
+
 </beans>

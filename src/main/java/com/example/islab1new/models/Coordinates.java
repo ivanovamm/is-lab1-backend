@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 
 
@@ -28,7 +29,7 @@ public class Coordinates {
 
 
     @Id
-    private Long id;
+    private Integer id;
 
     @NotNull
     @Column(name = "creator_id")
