@@ -21,6 +21,7 @@ public class AuthService {
     @Inject
     private JWTUtil jwtUtil;
 
+
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     public boolean authenticate(String username, String password) {
@@ -55,10 +56,7 @@ public class AuthService {
             throw new LoginException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateToken(Map.of(
-                "username", user.getUsername(),
-                "role", user.getRole()
-        ));
+        String token = jwtUtil.generateToken(username, password);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -68,4 +66,6 @@ public class AuthService {
     private String hashPassword(String password) {
         return org.apache.commons.codec.digest.DigestUtils.sha512Hex(password);
     }
+
+
 }

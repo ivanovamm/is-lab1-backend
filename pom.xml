@@ -30,7 +30,7 @@
         <jakarta.jakartaee-web-api.version>11.0.0-M3</jakarta.jakartaee-web-api.version>
         <java-jwt.version>4.4.0</java-jwt.version>
         <commons-codec.version>1.15</commons-codec.version>
-        <jackson-datatype-jsr310.version>2.18.0</jackson-datatype-jsr310.version>
+        <jackson-datatype-jsr310.version>2.13.0</jackson-datatype-jsr310.version>
     </properties>
 
     <dependencies>
@@ -45,6 +45,27 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson-datatype-jsr310.version}</version>
+        </dependency>
+
+
+
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
         </dependency>
 
 

@@ -1,36 +1,92 @@
 package com.example.islab1new.auth;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Date;
 
 @Provider
-public class JwtAuthenticationFilter implements jakarta.ws.rs.container.ContainerRequestFilter {
+public class JwtAuthenticationFilter implements ContainerRequestFilter {
 
-    private static final String SECRET_KEY = "r3g5d8T$!v8Y7sJ@k9cLq2zZpO&1Ws#tG";
+    private static final String SECRET_KEY = "9W6BJ9ITw20rjZHciqS4QfTP9G0bl05U1J77T5Grkp0";
+
+//    @Override
+//    public void filter(ContainerRequestContext requestContext) throws IOException {
+//        String path = requestContext.getUriInfo().getPath();
+//        if (path.equals("/auth/login") || path.equals("/auth/register")) {
+//            return;
+//        }
+//
+//        String authHeader = requestContext.getHeaderString("Authorization");
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            throw new WebApplicationException("Authorization header must be provided", Response.Status.UNAUTHORIZED);
+//        }
+//
+//        String token = authHeader.substring(7);
+//
+//        try {
+//            Claims claims = Jwts.parserBuilder()
+//                    .setSigningKey(SECRET_KEY.getBytes())
+//                    .build()
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//
+//            System.out.println("Token claims: " + claims);
+//
+//            String username = claims.getSubject();
+//            String role = claims.get("role", String.class);
+//
+//            Date expiration = claims.getExpiration();
+//            System.out.println("Token expiration: " + expiration);
+//            if (expiration.before(new Date())) {
+//                throw new WebApplicationException("Token has expired", Response.Status.UNAUTHORIZED);
+//            }
+//
+//            requestContext.setSecurityContext(new SecurityContext() {
+//                @Override
+//                public Principal getUserPrincipal() {
+//                    return () -> username;
+//                }
+//
+//                @Override
+//                public boolean isUserInRole(String roleToCheck) {
+//                    return role.equals(roleToCheck);
+//                }
+//
+//                @Override
+//                public boolean isSecure() {
+//                    return requestContext.getUriInfo().getRequestUri().getScheme().equals("https");
+//                }
+//
+//                @Override
+//                public String getAuthenticationScheme() {
+//                    return "Bearer";
+//                }
+//            });
+//
+//        } catch (ExpiredJwtException e) {
+//            throw new WebApplicationException("Token expired", Response.Status.UNAUTHORIZED);
+//        } catch (JwtException e) {
+//            throw new WebApplicationException("Invalid token", Response.Status.UNAUTHORIZED);
+//        }
+//    }
 
     @Override
-
     public void filter(ContainerRequestContext requestContext) throws IOException {
-
-        System.out.println("filter");
-
         String path = requestContext.getUriInfo().getPath();
-        if (path.equals("/auth/login") || path.equals("/auth/register")) {
-            return;
-        }
-        System.out.println("Authorization");
-        String authHeader = requestContext.getHeaderString("Authorization");
 
+        if (path.equals("/auth/login") || path.equals("/auth/register")) {
+            return; // Для публичных эндпоинтов токен не требуется
+        }
+
+        String authHeader = requestContext.getHeaderString("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new WebApplicationException("Authorization header must be provided", Response.Status.UNAUTHORIZED);
         }
@@ -38,35 +94,25 @@ public class JwtAuthenticationFilter implements jakarta.ws.rs.container.Containe
         String token = authHeader.substring(7);
 
         try {
-            String username = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY.getBytes())
+                    .build()
                     .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
 
-            requestContext.setSecurityContext(new SecurityContext() {
-                @Override
-                public Principal getUserPrincipal() {
-                    return () -> username;
-                }
+            String username = claims.getSubject();
 
-                @Override
-                public boolean isUserInRole(String role) {
-                    return role.equals(Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().get("role"));
-                }
+            if (username == null) {
+                throw new WebApplicationException("Invalid token: missing username", Response.Status.UNAUTHORIZED);
+            }
 
-                @Override
-                public boolean isSecure() {
-                    return requestContext.getUriInfo().getRequestUri().getScheme().equals("https");
-                }
+            // Добавляем имя пользователя в контекст запроса
+            requestContext.setProperty("username", username);
 
-                @Override
-                public String getAuthenticationScheme() {
-                    return SecurityContext.BASIC_AUTH;
-                }
-            });
-        } catch (SignatureException | ExpiredJwtException e) {
-            throw new WebApplicationException("Invalid or expired token", Response.Status.UNAUTHORIZED);
+        } catch (ExpiredJwtException e) {
+            throw new WebApplicationException("Token expired", Response.Status.UNAUTHORIZED);
+        } catch (JwtException e) {
+            throw new WebApplicationException("Invalid token", Response.Status.UNAUTHORIZED);
         }
     }
 

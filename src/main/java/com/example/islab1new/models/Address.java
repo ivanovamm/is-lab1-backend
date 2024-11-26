@@ -1,5 +1,7 @@
 package com.example.islab1new.models;
 
+import com.example.islab1new.services.UserService;
+import jakarta.inject.Inject;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "address")
 public class Address {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,12 +26,13 @@ public class Address {
 
     @NotNull
     @Column(name = "creator_id")
-    private Long creatorId;
+    private Integer creatorId;
 
 
 
     @NotNull
     @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+    private String creationDate;
+    
 
 }

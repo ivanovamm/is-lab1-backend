@@ -11,15 +11,16 @@ import java.util.Map;
 @ApplicationScoped
 public class JWTUtil {
 
-    private final Key secretKey = Keys.hmacShaKeyFor("r3g5d8T$!v8Y7sJ@k9cLq2zZpO&1Ws#tG".getBytes());
+    private final Key secretKey = Keys.hmacShaKeyFor("9W6BJ9ITw20rjZHciqS4QfTP9G0bl05U1J77T5Grkp0".getBytes());
     private final long expirationTime = 3600000;
 
-    public String generateToken(Map<String, Object> claims) {
+    public String generateToken(String username, String password) {
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(username) // Задаем username как subject
+                .claim("password", password) // Добавляем роль как claim
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

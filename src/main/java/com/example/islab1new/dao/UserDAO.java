@@ -13,65 +13,56 @@ import java.util.Optional;
 @RequestScoped
 public class UserDAO {
 
-  @PersistenceContext
-  private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-  @Transactional
+    @Transactional
     public void save(User user) {
         try {
             em.persist(user);
         } catch (Exception e) {
-            em.getTransaction().rollback();
             throw e;
         }
     }
 
+
     public User findById(Integer id) {
-        try {
-            return em.find(User.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(User.class, id);
+
     }
 
+//    public User findUserByName(String name) {
+//        return em.find(User.class, name);
+//
+//    }
 
 
     public List<User> findAll() {
-        try {
-            return em.createQuery("SELECT u FROM User u", User.class).getResultList();
-        } finally {
-            em.close();
-        }
+        return em.createQuery("SELECT u FROM User u", User.class).getResultList();
+
     }
 
+    @Transactional
     public void update(User user) {
         try {
-            em.getTransaction().begin();
             em.merge(user);
-            em.getTransaction().commit();
+
         } catch (Exception e) {
-            em.getTransaction().rollback();
             throw e;
-        } finally {
-            em.close();
         }
     }
 
+    @Transactional
     public void delete(Integer id) {
         try {
-            em.getTransaction().begin();
             User user = em.find(User.class, id);
             if (user != null) {
                 em.remove(user);
             } else {
                 throw new EntityNotFoundException("User not found");
             }
-            em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
             throw e;
-        } finally {
-            em.close();
         }
     }
 
@@ -81,4 +72,15 @@ public class UserDAO {
         query.setParameter("username", username);
         return query.getResultStream().findFirst();
     }
+
+    public User findUserByName(String name) {
+        try {
+            return em.createQuery("SELECT u FROM User u WHERE u.username = :name", User.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 }
