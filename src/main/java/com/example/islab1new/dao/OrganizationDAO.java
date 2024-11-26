@@ -20,6 +20,7 @@ public class OrganizationDAO {
     public void save(Organization organization) {
         try {
             em.persist(organization);
+            System.out.println("Creating organization: " + organization.getName());
 
         } catch (Exception e) {
             throw e;

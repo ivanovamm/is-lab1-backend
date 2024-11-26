@@ -1,9 +1,6 @@
 package com.example.islab1new.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +16,10 @@ import java.time.LocalDateTime;
 @Entity
 public class Coordinates {
 
+    @GeneratedValue
+    @Id
+    private Integer id;
+
     @NotNull
     @Column(name = "x")
     private Long x;
@@ -28,16 +29,13 @@ public class Coordinates {
     private int y;
 
 
-    @Id
-    private Integer id;
-
     @NotNull
     @Column(name = "creator_id")
-    private Long creatorId;
+    private Integer creatorId;
 
     @NotNull
     @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+    private String creationDate;
 
 
 }

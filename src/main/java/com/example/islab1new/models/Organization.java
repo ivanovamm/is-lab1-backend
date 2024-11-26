@@ -26,7 +26,8 @@ public class Organization {
     private Coordinates coordinates;
 
     @Column(nullable = false)
-    private LocalDate creationDate;
+    private String creationDate;
+    // TODO: 26.11.2024 потом исправить на LocalDateTime
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private Address officialAddress;
@@ -54,6 +55,6 @@ public class Organization {
 
     @NotNull
     @Column(name = "creator_id")
-    private Long creatorId;
+    private Integer creatorId;
 
 }

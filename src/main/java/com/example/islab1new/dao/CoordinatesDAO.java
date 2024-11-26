@@ -16,6 +16,7 @@ public class CoordinatesDAO {
     @Transactional
     public void save(Coordinates coordinates) {
         try {
+            System.out.println("Creating coordinates: " + coordinates.getX()+ " " + coordinates.getY());
             em.persist(coordinates);
         } catch (Exception e) {
             throw e;
