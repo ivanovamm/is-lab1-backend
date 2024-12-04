@@ -83,7 +83,7 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
         String path = requestContext.getUriInfo().getPath();
 
         if (path.equals("/auth/login") || path.equals("/auth/register")) {
-            return; // Для публичных эндпоинтов токен не требуется
+            return;
         }
 
         String authHeader = requestContext.getHeaderString("Authorization");
@@ -106,7 +106,6 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                 throw new WebApplicationException("Invalid token: missing username", Response.Status.UNAUTHORIZED);
             }
 
-            // Добавляем имя пользователя в контекст запроса
             requestContext.setProperty("username", username);
 
         } catch (ExpiredJwtException e) {

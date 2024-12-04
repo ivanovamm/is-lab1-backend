@@ -16,8 +16,8 @@ public class JWTUtil {
 
     public String generateToken(String username, String password) {
         return Jwts.builder()
-                .setSubject(username) // Задаем username как subject
-                .claim("password", password) // Добавляем роль как claim
+                .setSubject(username)
+                .claim("password", password)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(SignatureAlgorithm.HS256, secretKey)

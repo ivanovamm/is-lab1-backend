@@ -1,14 +1,10 @@
 package com.example.islab1new.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import java.time.LocalDateTime;
 
 
 @Getter
@@ -16,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Coordinates {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
 

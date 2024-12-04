@@ -21,16 +21,10 @@ public class Organization {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    private Coordinates coordinates;
 
     @Column(nullable = false)
     private String creationDate;
     // TODO: 26.11.2024 потом исправить на LocalDateTime
-
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    private Address officialAddress;
 
     @Min(value = 0)
     @Column(nullable = false)
@@ -49,9 +43,17 @@ public class Organization {
     @Column(nullable = false)
     private OrganizationType type;
 
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "official_address_id",  referencedColumnName = "id")
+    private Address officialAddress;
+
+    @ManyToOne
+    @JoinColumn(name = "postal_address_id",  referencedColumnName = "id")
     private Address postalAddress;
+
+    @ManyToOne
+    @JoinColumn(name = "coordinates_id",  referencedColumnName = "id")
+    private Coordinates coordinates;
 
     @NotNull
     @Column(name = "creator_id")
