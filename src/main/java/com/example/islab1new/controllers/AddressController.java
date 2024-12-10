@@ -60,7 +60,7 @@ public class AddressController {
         address.setCreatorId(userId);
         address.setCreationDate(LocalDateTime.now().toString());
 
-        addressService.addAddress(address);
+        addressService.addAddress(address, userId);
 
         return Response.status(Response.Status.CREATED).entity(address).build();
     }
@@ -71,7 +71,14 @@ public class AddressController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateAddress(@PathParam("id") Integer id, Address address) {
+    public Response updateAddress(@PathParam("id") Integer id, Address address, @Context jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+//        System.out.println("\n\n\n\n\n\n" + (String) httpRequest.getAttribute("username")+ "\n\n\n\n\n\n");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
+        Integer userId = userDAO.findUserByName(username).getId();
         Address existingAddress = addressService.getAddressById(id);
         if (existingAddress == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Address not found").build();
@@ -81,7 +88,7 @@ public class AddressController {
         address.setCreatorId(existingAddress.getCreatorId());
         address.setCreationDate(existingAddress.getCreationDate());
 
-        addressService.updateAddress(address);
+        addressService.updateAddress(address, userId);
 
         return Response.ok(address).build();
     }
@@ -91,8 +98,15 @@ public class AddressController {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAddress(@PathParam("id") Integer id) {
-        addressService.removeAddress(id);
+    public Response deleteAddress(@PathParam("id") Integer id, @Context jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+//        System.out.println("\n\n\n\n\n\n" + (String) httpRequest.getAttribute("username")+ "\n\n\n\n\n\n");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
+        Integer userId = userDAO.findUserByName(username).getId();
+        addressService.removeAddress(id, userId);
         return Response.noContent().build();
     }
 }

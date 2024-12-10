@@ -1,11 +1,14 @@
 package com.example.islab1new.dao;
 
+import com.example.islab1new.models.history.Action;
+import com.example.islab1new.models.history.OrganizationHistory;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import jakarta.persistence.*;
 import com.example.islab1new.models.Organization;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Named
@@ -17,10 +20,17 @@ public class OrganizationDAO {
 
 
     @Transactional
-    public void save(Organization organization) {
+    public void save(Organization organization, Integer userId) {
         try {
             em.persist(organization);
             System.out.println("Creating organization: " + organization.getName());
+
+            OrganizationHistory history = new OrganizationHistory();
+            history.setOrganization(organization);
+            history.setAction(Action.CREATE);
+            history.setActionDate(LocalDateTime.now().toString());
+            history.setUserId(userId);
+            em.persist(history);
 
         } catch (Exception e) {
             throw e;
@@ -37,20 +47,32 @@ public class OrganizationDAO {
     }
 
     @Transactional
-    public void update(Organization organization) {
+    public void update(Organization organization, Integer userId) {
         try {
             em.merge(organization);
+            OrganizationHistory history = new OrganizationHistory();
+            history.setOrganization(organization);
+            history.setAction(Action.UPDATE);
+            history.setActionDate(LocalDateTime.now().toString());
+            history.setUserId(userId);
+            em.persist(history);
         } catch (Exception e) {
             throw e;
         }
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Integer id, Integer userId) {
         try {
             Organization organization = em.find(Organization.class, id);
             if (organization != null) {
                 em.remove(organization);
+                OrganizationHistory history = new OrganizationHistory();
+                history.setOrganization(organization);
+                history.setAction(Action.DELETE);
+                history.setActionDate(LocalDateTime.now().toString());
+                history.setUserId(userId);
+                em.persist(history);
             } else {
                 throw new EntityNotFoundException("Organization not found");
             }

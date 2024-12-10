@@ -14,12 +14,12 @@ public class CoordinatesService {
     @Inject
     private CoordinatesDAO coordinatesDAO;
 
-    public void addCoordinates(Coordinates coordinates) {
-        coordinatesDAO.save(coordinates);
+    public void addCoordinates(Coordinates coordinates, Integer userId) {
+        coordinatesDAO.save(coordinates, userId);
     }
 
-    public void updateCoordinates(Coordinates coordinates){
-        coordinatesDAO.update(coordinates);
+    public void updateCoordinates(Coordinates coordinates, Integer userId){
+        coordinatesDAO.update(coordinates, userId);
     }
 
     public Coordinates getCoordinatesById(Integer id) {
@@ -30,8 +30,8 @@ public class CoordinatesService {
         return coordinatesDAO.findAll();
     }
 
-    public void removeCoordinates(Integer id) {
-        coordinatesDAO.delete(id);
+    public void removeCoordinates(Integer id, Integer userId) {
+        coordinatesDAO.delete(id, userId);
     }
 
 }

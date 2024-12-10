@@ -14,12 +14,12 @@ public class OrganizationService {
     @Inject
     private OrganizationDAO OrganizationDAO;
 
-    public void addOrganization(Organization organization) {
-        OrganizationDAO.save(organization);
+    public void addOrganization(Organization organization, Integer userId) {
+        OrganizationDAO.save(organization, userId);
     }
 
-    public void updateOrganization(Organization organization){
-        OrganizationDAO.update(organization);
+    public void updateOrganization(Organization organization, Integer userId){
+        OrganizationDAO.update(organization, userId);
     }
 
     public Organization getOrganizationById(Integer id) {
@@ -30,7 +30,7 @@ public class OrganizationService {
         return OrganizationDAO.findAll();
     }
 
-    public void removeOrganization(Integer id) {
-        OrganizationDAO.delete(id);
+    public void removeOrganization(Integer id, Integer userId) {
+        OrganizationDAO.delete(id, userId);
     }
 }

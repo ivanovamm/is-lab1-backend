@@ -52,7 +52,7 @@ public class CoordinatesController {
         coordinates.setCreatorId(userId);
         coordinates.setCreationDate(LocalDateTime.now().toString());
 
-        coordinatesService.addCoordinates(coordinates);
+        coordinatesService.addCoordinates(coordinates, userId);
 
         return Response.status(Response.Status.CREATED).entity(coordinates).build();
     }
@@ -62,7 +62,13 @@ public class CoordinatesController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCoordinates(@PathParam("id") Integer id, Coordinates coordinates) {
+    public Response updateCoordinates(@PathParam("id") Integer id, Coordinates coordinates,  @Context jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+        Integer userId = userDAO.findUserByName(username).getId();
+
         Coordinates existingCoordinates = coordinatesService.getCoordinatesById(id);
         if (existingCoordinates == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Coordinates not found").build();
@@ -75,7 +81,7 @@ public class CoordinatesController {
             existingCoordinates.setY(coordinates.getY());
         }
 
-        coordinatesService.updateCoordinates(existingCoordinates);
+        coordinatesService.updateCoordinates(existingCoordinates, userId);
 
         return Response.ok(existingCoordinates).build();
     }
@@ -84,8 +90,13 @@ public class CoordinatesController {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCoordinates(@PathParam("id") Integer id) {
-        coordinatesService.removeCoordinates(id);
+    public Response deleteCoordinates(@PathParam("id") Integer id,  @Context jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+        Integer userId = userDAO.findUserByName(username).getId();
+        coordinatesService.removeCoordinates(id, userId);
         return Response.noContent().build();
     }
 }

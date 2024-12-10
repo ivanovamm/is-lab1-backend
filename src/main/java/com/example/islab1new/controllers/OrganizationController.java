@@ -84,7 +84,7 @@ public class OrganizationController {
         organization.setRating(organizationDTO.getRating());
         organization.setType(organizationDTO.getType());
 
-        organizationService.addOrganization(organization);
+        organizationService.addOrganization(organization, userId);
 
         return Response.status(Response.Status.CREATED).entity(organization).build();
     }
@@ -94,51 +94,75 @@ public class OrganizationController {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateOrganization(@PathParam("id") Integer id, Organization organization) {
+    public Response updateOrganization(
+            @PathParam("id") Integer id,
+            OrganizationDTO organizationDTO,
+            @Context jakarta.servlet.http.HttpServletRequest httpRequest
+    ) {
+        String username = (String) httpRequest.getAttribute("username");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
+        Integer userId = userDAO.findUserByName(username).getId();
         Organization existingOrganization = organizationService.getOrganizationById(id);
         if (existingOrganization == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Organization not found").build();
         }
 
-        if (organization.getName() != null) {
-            existingOrganization.setName(organization.getName());
+        if (organizationDTO.getName() != null) {
+            existingOrganization.setName(organizationDTO.getName());
         }
-        if (organization.getCreationDate() != null) {
-            existingOrganization.setCreationDate(organization.getCreationDate());
+        if (organizationDTO.getAnnualTurnover() != null) {
+            existingOrganization.setAnnualTurnover(organizationDTO.getAnnualTurnover());
         }
-        if (organization.getAnnualTurnover() != 0) {
-            existingOrganization.setAnnualTurnover(organization.getAnnualTurnover());
+        if (organizationDTO.getEmployeesCount() != null) {
+            existingOrganization.setEmployeesCount(organizationDTO.getEmployeesCount());
         }
-        if (organization.getEmployeesCount() != null) {
-            existingOrganization.setEmployeesCount(organization.getEmployeesCount());
+        if (organizationDTO.getRating() != 0) {
+            existingOrganization.setRating(organizationDTO.getRating());
         }
-        if (organization.getRating() != 0) {
-            existingOrganization.setRating(organization.getRating());
+        if (organizationDTO.getType() != null) {
+            existingOrganization.setType(organizationDTO.getType());
         }
-        if (organization.getType() != null) {
-            existingOrganization.setType(organization.getType());
+        if (organizationDTO.getOfficialAddress() != null) {
+            Address officialAddress = addressDAO.findById(organizationDTO.getOfficialAddress());
+            if (officialAddress != null) {
+                existingOrganization.setOfficialAddress(officialAddress);
+            }
         }
-        if (organization.getOfficialAddress() != null) {
-            existingOrganization.setOfficialAddress(organization.getOfficialAddress());
+        if (organizationDTO.getPostalAddress() != null) {
+            Address postalAddress = addressDAO.findById(organizationDTO.getPostalAddress());
+            if (postalAddress != null) {
+                existingOrganization.setPostalAddress(postalAddress);
+            }
         }
-        if (organization.getPostalAddress() != null) {
-            existingOrganization.setPostalAddress(organization.getPostalAddress());
-        }
-        if (organization.getCoordinates() != null) {
-            existingOrganization.setCoordinates(organization.getCoordinates());
+        if (organizationDTO.getCoordinates() != null) {
+            Coordinates coordinates = coordinatesDAO.findById(organizationDTO.getCoordinates());
+            if (coordinates != null) {
+                existingOrganization.setCoordinates(coordinates);
+            }
         }
 
-        organizationService.updateOrganization(existingOrganization);
+        organizationService.updateOrganization(existingOrganization, userId);
 
         return Response.ok(existingOrganization).build();
     }
 
 
+
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOrganization(@PathParam("id") Integer id) {
-        organizationService.removeOrganization(id);
+    public Response deleteOrganization(@PathParam("id") Integer id,  @Context jakarta.servlet.http.HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+        if (username == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
+        Integer userId = userDAO.findUserByName(username).getId();
+
+        organizationService.removeOrganization(id, userId);
         return Response.noContent().build();
     }
 }

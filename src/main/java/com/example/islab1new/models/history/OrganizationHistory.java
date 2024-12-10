@@ -26,8 +26,7 @@ public class OrganizationHistory {
     @Column(name = "action_date")
     private String actionDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name="user_id")
+    private Integer userId;
 
 }
