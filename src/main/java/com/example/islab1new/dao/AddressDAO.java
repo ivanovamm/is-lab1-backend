@@ -38,6 +38,7 @@ public class AddressDAO {
     @Transactional
     public void update(Address address) {
         try {
+            System.out.println("Updating address: " + address);
             em.merge(address);
         } catch (Exception e) {
             throw e;

@@ -22,7 +22,7 @@ public class Coordinates {
 
     @Min(value = -506)
     @Column(name = "y")
-    private int y;
+    private Integer y;
 
 
     @NotNull

@@ -79,13 +79,11 @@ public class OrganizationController {
         organization.setPostalAddress(postalAddress);
         organization.setCoordinates(coordinates);
 
-        // Установить другие поля
         organization.setAnnualTurnover(organizationDTO.getAnnualTurnover());
         organization.setEmployeesCount(organizationDTO.getEmployeesCount());
         organization.setRating(organizationDTO.getRating());
         organization.setType(organizationDTO.getType());
 
-        // Сохранить организацию
         organizationService.addOrganization(organization);
 
         return Response.status(Response.Status.CREATED).entity(organization).build();
@@ -97,10 +95,44 @@ public class OrganizationController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateOrganization(@PathParam("id") Integer id, Organization organization) {
-        organization.setId(id);
-        organizationService.updateOrganization(organization);
-        return Response.ok(organization).build();
+        Organization existingOrganization = organizationService.getOrganizationById(id);
+        if (existingOrganization == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Organization not found").build();
+        }
+
+        if (organization.getName() != null) {
+            existingOrganization.setName(organization.getName());
+        }
+        if (organization.getCreationDate() != null) {
+            existingOrganization.setCreationDate(organization.getCreationDate());
+        }
+        if (organization.getAnnualTurnover() != 0) {
+            existingOrganization.setAnnualTurnover(organization.getAnnualTurnover());
+        }
+        if (organization.getEmployeesCount() != null) {
+            existingOrganization.setEmployeesCount(organization.getEmployeesCount());
+        }
+        if (organization.getRating() != 0) {
+            existingOrganization.setRating(organization.getRating());
+        }
+        if (organization.getType() != null) {
+            existingOrganization.setType(organization.getType());
+        }
+        if (organization.getOfficialAddress() != null) {
+            existingOrganization.setOfficialAddress(organization.getOfficialAddress());
+        }
+        if (organization.getPostalAddress() != null) {
+            existingOrganization.setPostalAddress(organization.getPostalAddress());
+        }
+        if (organization.getCoordinates() != null) {
+            existingOrganization.setCoordinates(organization.getCoordinates());
+        }
+
+        organizationService.updateOrganization(existingOrganization);
+
+        return Response.ok(existingOrganization).build();
     }
+
 
     @DELETE
     @Path("/{id}")

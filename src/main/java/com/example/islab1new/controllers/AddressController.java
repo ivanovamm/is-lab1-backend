@@ -66,16 +66,27 @@ public class AddressController {
     }
 
 
-
     //todo
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateAddress(@PathParam("id") Integer id, Address address) {
+        Address existingAddress = addressService.getAddressById(id);
+        if (existingAddress == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Address not found").build();
+        }
+
+        address.setId(existingAddress.getId());
+        address.setCreatorId(existingAddress.getCreatorId());
+        address.setCreationDate(existingAddress.getCreationDate());
+
         addressService.updateAddress(address);
+
         return Response.ok(address).build();
     }
+
+
 
     @DELETE
     @Path("/{id}")

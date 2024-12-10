@@ -63,10 +63,23 @@ public class CoordinatesController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateCoordinates(@PathParam("id") Integer id, Coordinates coordinates) {
-        coordinates.setId(id);
-        coordinatesService.updateCoordinates(coordinates);
-        return Response.ok(coordinates).build();
+        Coordinates existingCoordinates = coordinatesService.getCoordinatesById(id);
+        if (existingCoordinates == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Coordinates not found").build();
+        }
+
+        if (coordinates.getX() != null) {
+            existingCoordinates.setX(coordinates.getX());
+        }
+        if (coordinates.getY() != null) {
+            existingCoordinates.setY(coordinates.getY());
+        }
+
+        coordinatesService.updateCoordinates(existingCoordinates);
+
+        return Response.ok(existingCoordinates).build();
     }
+
 
     @DELETE
     @Path("/{id}")
