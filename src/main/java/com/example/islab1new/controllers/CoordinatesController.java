@@ -3,7 +3,9 @@ package com.example.islab1new.controllers;
 import com.example.islab1new.dao.UserDAO;
 import com.example.islab1new.models.Address;
 import com.example.islab1new.models.Coordinates;
+import com.example.islab1new.models.history.CoordinatesHistory;
 import com.example.islab1new.services.CoordinatesService;
+import com.example.islab1new.services.OrganizationService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -12,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Path("/coordinates")
 public class CoordinatesController {
@@ -21,10 +24,20 @@ public class CoordinatesController {
     @Inject
     UserDAO userDAO;
 
+    @Inject
+    OrganizationService organizationService;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Coordinates> getAllCoordinates() {
         return coordinatesService.getAllCoordinates();
+    }
+
+    @GET
+    @Path("/history")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<CoordinatesHistory> getAllHistory(){
+        return coordinatesService.getAllHistory();
     }
 
     @GET
@@ -70,6 +83,9 @@ public class CoordinatesController {
         Integer userId = userDAO.findUserByName(username).getId();
 
         Coordinates existingCoordinates = coordinatesService.getCoordinatesById(id);
+        if (!Objects.equals(userId, existingCoordinates.getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
         if (existingCoordinates == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Coordinates not found").build();
         }
@@ -96,6 +112,10 @@ public class CoordinatesController {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
         }
         Integer userId = userDAO.findUserByName(username).getId();
+        if (!Objects.equals(userId, coordinatesService.getCoordinatesById(id).getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
+        organizationService.deleteByCoordinates(id);
         coordinatesService.removeCoordinates(id, userId);
         return Response.noContent().build();
     }

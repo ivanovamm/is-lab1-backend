@@ -16,9 +16,8 @@ public class OrganizationHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "organization_id",  referencedColumnName = "id")
-    private Organization organization;
+    @Column(name = "organization_id")
+    private Integer organization;
 
     @Column(name = "action")
     private Action action;

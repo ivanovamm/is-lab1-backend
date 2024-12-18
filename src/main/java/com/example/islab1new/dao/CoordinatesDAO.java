@@ -23,7 +23,7 @@ public class CoordinatesDAO {
             System.out.println("Creating coordinates: " + coordinates.getX()+ " " + coordinates.getY());
             em.persist(coordinates);
             CoordinatesHistory history = new CoordinatesHistory();
-            history.setCoordinates(coordinates);
+            history.setCoordinates(coordinates.getId());
             history.setAction(Action.CREATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -44,12 +44,16 @@ public class CoordinatesDAO {
 
     }
 
+    public List<CoordinatesHistory> findAllHistory(){
+        return em.createQuery("SELECT a FROM CoordinatesHistory a", CoordinatesHistory.class).getResultList();
+    }
+
     @Transactional
     public void update(Coordinates coordinates, Integer userId) {
         try {
             em.merge(coordinates);
             CoordinatesHistory history = new CoordinatesHistory();
-            history.setCoordinates(coordinates);
+            history.setCoordinates(coordinates.getId());
             history.setAction(Action.UPDATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -66,7 +70,7 @@ public class CoordinatesDAO {
             if (coordinates != null) {
                 em.remove(coordinates);
                 CoordinatesHistory history = new CoordinatesHistory();
-                history.setCoordinates(coordinates);
+                history.setCoordinates(coordinates.getId());
                 history.setAction(Action.DELETE);
                 history.setActionDate(LocalDateTime.now().toString());
                 history.setUserId(userId);

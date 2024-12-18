@@ -2,9 +2,11 @@ package com.example.islab1new.controllers;
 
 import com.example.islab1new.auth.AuthenticationResponse;
 import com.example.islab1new.dao.UserDAO;
+import com.example.islab1new.models.history.AddressHistory;
 import com.example.islab1new.requests.AddressRequest;
 import com.example.islab1new.responses.AddressResponse;
 import com.example.islab1new.services.AddressService;
+import com.example.islab1new.services.OrganizationService;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.ws.rs.*;
@@ -16,6 +18,7 @@ import com.example.islab1new.models.Address;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Path("/addresses")
 public class AddressController {
@@ -26,10 +29,20 @@ public class AddressController {
     @Inject
     private UserDAO userDAO;
 
+    @Inject
+    private OrganizationService organizationService;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Address> getAllAddresses() {
         return addressService.getAllAddresses();
+    }
+
+    @GET
+    @Path("/history")
+    @Produces(MediaType.APPLICATION_JSON)
+    public  List<AddressHistory> getAllHistory(){
+        return addressService.allHistory();
     }
 
     @GET
@@ -80,6 +93,9 @@ public class AddressController {
 
         Integer userId = userDAO.findUserByName(username).getId();
         Address existingAddress = addressService.getAddressById(id);
+        if (!Objects.equals(userId, existingAddress.getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
         if (existingAddress == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Address not found").build();
         }
@@ -104,8 +120,11 @@ public class AddressController {
         if (username == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
         }
-
         Integer userId = userDAO.findUserByName(username).getId();
+        if (!Objects.equals(userId, addressService.getAddressById(id).getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
+        organizationService.deleteByAddress(id);
         addressService.removeAddress(id, userId);
         return Response.noContent().build();
     }

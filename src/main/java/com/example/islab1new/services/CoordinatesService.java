@@ -3,6 +3,7 @@ package com.example.islab1new.services;
 
 import com.example.islab1new.dao.CoordinatesDAO;
 import com.example.islab1new.models.Coordinates;
+import com.example.islab1new.models.history.CoordinatesHistory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -28,6 +29,10 @@ public class CoordinatesService {
 
     public List<Coordinates> getAllCoordinates() {
         return coordinatesDAO.findAll();
+    }
+
+    public List<CoordinatesHistory> getAllHistory(){
+        return coordinatesDAO.findAllHistory();
     }
 
     public void removeCoordinates(Integer id, Integer userId) {

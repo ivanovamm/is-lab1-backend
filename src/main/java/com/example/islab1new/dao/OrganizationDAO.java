@@ -26,7 +26,7 @@ public class OrganizationDAO {
             System.out.println("Creating organization: " + organization.getName());
 
             OrganizationHistory history = new OrganizationHistory();
-            history.setOrganization(organization);
+            history.setOrganization(organization.getId());
             history.setAction(Action.CREATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -46,12 +46,17 @@ public class OrganizationDAO {
         return em.createQuery("SELECT o FROM Organization o", Organization.class).getResultList();
     }
 
+    public List<OrganizationHistory> findAllHistory(){
+        return em.createQuery("SELECT o FROM OrganizationHistory o", OrganizationHistory.class).getResultList();
+    }
+
+
     @Transactional
     public void update(Organization organization, Integer userId) {
         try {
             em.merge(organization);
             OrganizationHistory history = new OrganizationHistory();
-            history.setOrganization(organization);
+            history.setOrganization(organization.getId());
             history.setAction(Action.UPDATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -68,7 +73,7 @@ public class OrganizationDAO {
             if (organization != null) {
                 em.remove(organization);
                 OrganizationHistory history = new OrganizationHistory();
-                history.setOrganization(organization);
+                history.setOrganization(organization.getId());
                 history.setAction(Action.DELETE);
                 history.setActionDate(LocalDateTime.now().toString());
                 history.setUserId(userId);
@@ -80,4 +85,20 @@ public class OrganizationDAO {
             throw e;
         }
     }
+
+    @Transactional
+    public void deleteByAddress(Integer addressId) {
+        em.createQuery("DELETE FROM Organization o WHERE o.postalAddress.id = :addressId OR o.officialAddress.id = :addressId")
+                .setParameter("addressId", addressId)
+                .executeUpdate();
+    }
+
+    @Transactional
+    public void deleteByCoordinates(Integer coordinatesId) {
+        em.createQuery("DELETE FROM Organization o WHERE o.coordinates.id = :coordinatesId")
+                .setParameter("coordinatesId", coordinatesId)
+                .executeUpdate();
+    }
+
+
 }

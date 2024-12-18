@@ -1,5 +1,6 @@
 package com.example.islab1new.services;
 
+import com.example.islab1new.models.history.OrganizationHistory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -13,6 +14,14 @@ public class OrganizationService {
 
     @Inject
     private OrganizationDAO OrganizationDAO;
+
+    public void deleteByAddress(Integer addressId){
+        OrganizationDAO.deleteByAddress(addressId);
+    }
+
+    public void deleteByCoordinates(Integer coordinatesId){
+        OrganizationDAO.deleteByCoordinates(coordinatesId);
+    }
 
     public void addOrganization(Organization organization, Integer userId) {
         OrganizationDAO.save(organization, userId);
@@ -28,6 +37,9 @@ public class OrganizationService {
 
     public List<Organization> getAllOrganizations() {
         return OrganizationDAO.findAll();
+    }
+    public List<OrganizationHistory> getAllHistory(){
+        return OrganizationDAO.findAllHistory();
     }
 
     public void removeOrganization(Integer id, Integer userId) {

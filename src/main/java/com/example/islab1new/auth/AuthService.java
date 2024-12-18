@@ -29,7 +29,7 @@ public class AuthService {
     }
 
     @Transactional
-    public boolean registerUser(@NotNull String username, @NotNull String password) {
+    public boolean registerUser(@NotNull String username, @NotNull String password, @NotNull String role) {
         if (password.length() < MIN_PASSWORD_LENGTH) {
             throw new IllegalArgumentException("Password must be at least " + MIN_PASSWORD_LENGTH + " characters long");
         }
@@ -42,8 +42,7 @@ public class AuthService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(hashPassword(password));
-        user.setRole(User.ROLE_USER);
-
+        user.setRole(role);
         userDAO.save(user);
         return true;
     }

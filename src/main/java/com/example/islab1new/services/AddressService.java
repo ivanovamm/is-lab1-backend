@@ -1,5 +1,6 @@
 package com.example.islab1new.services;
 
+import com.example.islab1new.models.history.AddressHistory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -18,6 +19,10 @@ public class AddressService {
 
     public void addAddress(Address address, Integer userId) {
         AddressDAO.save(address, userId);
+    }
+
+    public List<AddressHistory> allHistory(){
+        return AddressDAO.findAllHistory();
     }
 
     public void updateAddress(Address address, Integer userId){

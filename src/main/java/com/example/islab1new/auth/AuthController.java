@@ -21,7 +21,7 @@ public class AuthController {
     public Response register(RegisterRequest registerRequest) {
         try {
             System.out.println("before register");
-            authService.registerUser(registerRequest.getUsername(), registerRequest.getPassword());
+            authService.registerUser(registerRequest.getUsername(), registerRequest.getPassword(), registerRequest.getRole());
             System.out.println("register");
             return Response.status(Response.Status.CREATED).entity("User registered successfully").build();
         } catch (IllegalArgumentException e) {

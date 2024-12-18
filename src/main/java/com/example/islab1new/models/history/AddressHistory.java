@@ -16,9 +16,8 @@ public class AddressHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id",  referencedColumnName = "id")
-    private Address address;
+    @Column(name = "address_id")
+    private Integer address;
 
     @Column(name = "action")
     private Action action;

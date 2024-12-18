@@ -16,9 +16,8 @@ public class CoordinatesHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "Coordinates_id",  referencedColumnName = "id")
-    private Coordinates coordinates;
+    @Column(name = "Coordinates_id")
+    private Integer coordinates;
 
     @Column(name = "action")
     private Action action;

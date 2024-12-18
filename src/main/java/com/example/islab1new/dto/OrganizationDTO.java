@@ -7,12 +7,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrganizationDTO {
+    private Integer id;
     private String name;
     private Integer coordinates;
     private Integer officialAddress;
-    private Integer annualTurnover;
+    private double annualTurnover;
     private Long employeesCount;
     private int rating;
     private OrganizationType type;
     private Integer postalAddress;
+    private Integer creatorId;
+    private String creationDate;
 }

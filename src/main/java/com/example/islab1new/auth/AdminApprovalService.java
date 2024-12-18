@@ -10,6 +10,9 @@ import java.util.List;
 @ApplicationScoped
 public class AdminApprovalService {
 
+    // TODO: 11.12.2024 панель админа, поиск по ид, привелегии админа + пофиксить баги и добавить эксепшены
+
+    // TODO: 11.12.2024 асинхронное обновление + пагинация (но необязательно)
     @Inject
     private UserDAO userDAO;
 

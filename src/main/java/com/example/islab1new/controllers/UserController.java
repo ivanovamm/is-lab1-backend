@@ -39,6 +39,7 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
         userService.register(user.getUsername(), user.getPassword(), user.getRole());
+        System.out.println(user.getUsername()+" " + user.getPassword()+" " +user.getRole());
         return Response.status(Response.Status.CREATED).entity(user).build();
     }
 

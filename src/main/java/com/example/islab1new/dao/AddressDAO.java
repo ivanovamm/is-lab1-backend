@@ -24,7 +24,7 @@ public class AddressDAO {
             System.out.println("Creating address: " + address.getStreet());
             em.persist(address);
             AddressHistory history = new AddressHistory();
-            history.setAddress(address);
+            history.setAddress(address.getId());
             history.setAction(Action.CREATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -43,13 +43,18 @@ public class AddressDAO {
 
     }
 
+    public List<AddressHistory> findAllHistory() {
+        return em.createQuery("SELECT a FROM AddressHistory a", AddressHistory.class).getResultList();
+
+    }
+
     @Transactional
     public void update(Address address, Integer userId) {
         try {
             System.out.println("Updating address: " + address);
             em.merge(address);
             AddressHistory history = new AddressHistory();
-            history.setAddress(address);
+            history.setAddress(address.getId());
             history.setAction(Action.UPDATE);
             history.setActionDate(LocalDateTime.now().toString());
             history.setUserId(userId);
@@ -66,7 +71,7 @@ public class AddressDAO {
             if (address != null) {
                 em.remove(address);
                 AddressHistory history = new AddressHistory();
-                history.setAddress(address);
+                history.setAddress(address.getId());
                 history.setAction(Action.DELETE);
                 history.setActionDate(LocalDateTime.now().toString());
                 history.setUserId(userId);

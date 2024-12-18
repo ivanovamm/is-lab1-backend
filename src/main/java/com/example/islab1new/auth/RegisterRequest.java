@@ -17,11 +17,15 @@ public class RegisterRequest {
     @NonNull
     private String password;
 
+    @NonNull
+    private String role;
+
     @JsonCreator
     public RegisterRequest(@JsonProperty("username") String username,
-                           @JsonProperty("password") String password) {
+                           @JsonProperty("password") String password, @JsonProperty("role") String role) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
 }

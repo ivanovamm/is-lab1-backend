@@ -4,9 +4,11 @@ import com.example.islab1new.dao.AddressDAO;
 import com.example.islab1new.dao.CoordinatesDAO;
 import com.example.islab1new.dao.UserDAO;
 import com.example.islab1new.dto.OrganizationDTO;
+import com.example.islab1new.mappers.OrganizationMapper;
 import com.example.islab1new.models.Address;
 import com.example.islab1new.models.Coordinates;
 import com.example.islab1new.models.OrganizationType;
+import com.example.islab1new.models.history.OrganizationHistory;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -17,6 +19,8 @@ import com.example.islab1new.services.OrganizationService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Path("/organizations")
 public class OrganizationController {
@@ -33,10 +37,24 @@ public class OrganizationController {
     @Inject
     private CoordinatesDAO coordinatesDAO;
 
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Organization> getAllOrganizations() {
-        return organizationService.getAllOrganizations();
+    public Response getAllOrganizations() {
+        List<Organization> organizations = organizationService.getAllOrganizations();
+
+        List<OrganizationDTO> dtos = organizations.stream()
+                .map(OrganizationMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return Response.ok(dtos).build();
+    }
+
+    @GET
+    @Path("/history")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganizationHistory> getAllHistory(){
+        return organizationService.getAllHistory();
     }
 
     @GET
@@ -106,6 +124,9 @@ public class OrganizationController {
 
         Integer userId = userDAO.findUserByName(username).getId();
         Organization existingOrganization = organizationService.getOrganizationById(id);
+        if (!Objects.equals(userId, existingOrganization.getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
         if (existingOrganization == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Organization not found").build();
         }
@@ -113,7 +134,7 @@ public class OrganizationController {
         if (organizationDTO.getName() != null) {
             existingOrganization.setName(organizationDTO.getName());
         }
-        if (organizationDTO.getAnnualTurnover() != null) {
+        if (organizationDTO.getAnnualTurnover() != 0) {
             existingOrganization.setAnnualTurnover(organizationDTO.getAnnualTurnover());
         }
         if (organizationDTO.getEmployeesCount() != null) {
@@ -161,7 +182,9 @@ public class OrganizationController {
         }
 
         Integer userId = userDAO.findUserByName(username).getId();
-
+        if (!Objects.equals(userId, organizationService.getOrganizationById(id).getCreatorId())){
+            return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+        }
         organizationService.removeOrganization(id, userId);
         return Response.noContent().build();
     }
