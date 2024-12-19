@@ -13,4 +13,17 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>AdminAccessFilter</filter-name>
+        <filter-class>com.example.islab1new.security.AdminAccessFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AdminAccessFilter</filter-name>
+        <url-pattern>/api/admin/*</url-pattern>
+    </filter-mapping>
+
+
+
+
 </web-app>

@@ -124,7 +124,7 @@ public class OrganizationController {
 
         Integer userId = userDAO.findUserByName(username).getId();
         Organization existingOrganization = organizationService.getOrganizationById(id);
-        if (!Objects.equals(userId, existingOrganization.getCreatorId())){
+        if (!Objects.equals(userId, existingOrganization.getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         if (existingOrganization == null) {
@@ -182,7 +182,7 @@ public class OrganizationController {
         }
 
         Integer userId = userDAO.findUserByName(username).getId();
-        if (!Objects.equals(userId, organizationService.getOrganizationById(id).getCreatorId())){
+        if (!Objects.equals(userId, organizationService.getOrganizationById(id).getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         organizationService.removeOrganization(id, userId);

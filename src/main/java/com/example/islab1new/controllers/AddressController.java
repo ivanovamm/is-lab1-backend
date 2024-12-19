@@ -93,7 +93,7 @@ public class AddressController {
 
         Integer userId = userDAO.findUserByName(username).getId();
         Address existingAddress = addressService.getAddressById(id);
-        if (!Objects.equals(userId, existingAddress.getCreatorId())){
+        if (!Objects.equals(userId, existingAddress.getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         if (existingAddress == null) {
@@ -121,7 +121,7 @@ public class AddressController {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
         }
         Integer userId = userDAO.findUserByName(username).getId();
-        if (!Objects.equals(userId, addressService.getAddressById(id).getCreatorId())){
+        if (!Objects.equals(userId, addressService.getAddressById(id).getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         organizationService.deleteByAddress(id);

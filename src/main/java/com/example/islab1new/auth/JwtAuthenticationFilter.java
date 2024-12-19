@@ -101,12 +101,15 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                     .getBody();
 
             String username = claims.getSubject();
+            String role = claims.get("role", String.class);
 
             if (username == null) {
                 throw new WebApplicationException("Invalid token: missing username", Response.Status.UNAUTHORIZED);
             }
 
             requestContext.setProperty("username", username);
+            requestContext.setProperty("userRole", role);
+
 
         } catch (ExpiredJwtException e) {
             throw new WebApplicationException("Token expired", Response.Status.UNAUTHORIZED);

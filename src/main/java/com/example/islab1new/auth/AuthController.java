@@ -59,7 +59,7 @@ public class AuthController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(LoginRequest loginRequest) {
         try {
-            AuthenticationResponse response = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+            AuthenticationResponse response = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword(), userDAO.findByUsername(loginRequest.getUsername()).get().getRole());
             return Response.ok(response).build();
         } catch (LoginException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

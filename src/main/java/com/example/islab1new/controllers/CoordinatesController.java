@@ -83,7 +83,7 @@ public class CoordinatesController {
         Integer userId = userDAO.findUserByName(username).getId();
 
         Coordinates existingCoordinates = coordinatesService.getCoordinatesById(id);
-        if (!Objects.equals(userId, existingCoordinates.getCreatorId())){
+        if (!Objects.equals(userId, existingCoordinates.getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         if (existingCoordinates == null) {
@@ -112,7 +112,7 @@ public class CoordinatesController {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
         }
         Integer userId = userDAO.findUserByName(username).getId();
-        if (!Objects.equals(userId, coordinatesService.getCoordinatesById(id).getCreatorId())){
+        if (!Objects.equals(userId, coordinatesService.getCoordinatesById(id).getCreatorId()) && !userDAO.findUserByName(username).getRole().equals("ADMIN")){
             return Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
         }
         organizationService.deleteByCoordinates(id);

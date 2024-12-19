@@ -1,5 +1,8 @@
 package com.example.islab1new.auth;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.islab1new.models.User;
 import com.example.islab1new.dao.UserDAO;
 import com.example.islab1new.security.JWTUtil;
@@ -7,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotAuthorizedException;
 
 import javax.security.auth.login.LoginException;
 import java.util.Map;
@@ -48,7 +52,7 @@ public class AuthService {
     }
 
 
-    public AuthenticationResponse loginUser(String username, String password) throws LoginException {
+    public AuthenticationResponse loginUser(String username, String password, String role) throws LoginException {
         User user = userDAO.findByUsername(username)
                 .orElseThrow(() -> new LoginException("Invalid credentials"));
 
@@ -56,7 +60,7 @@ public class AuthService {
             throw new LoginException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateToken(username, password);
+        String token = jwtUtil.generateToken(username, password, role);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -67,5 +71,23 @@ public class AuthService {
         return org.apache.commons.codec.digest.DigestUtils.sha512Hex(password);
     }
 
+    public String getRoleFromToken(String token) {
+        try {
+            // Декодируем JWT токен
+            DecodedJWT decodedJWT = JWT.decode(token);
+
+            // Извлекаем роль из токена
+            String role = decodedJWT.getClaim("role").asString();
+
+            // Проверяем, если роль пустая, выбрасываем исключение
+            if (role == null) {
+                throw new NotAuthorizedException("Role not found in token");
+            }
+
+            return role;
+        } catch (JWTDecodeException e) {
+            throw new NotAuthorizedException("Invalid token format");
+        }
+    }
 
 }
