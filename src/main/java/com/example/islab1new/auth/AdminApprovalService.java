@@ -1,5 +1,7 @@
 package com.example.islab1new.auth;
 
+import com.example.islab1new.dao.AdminRequestsDAO;
+import com.example.islab1new.models.AdminRequests;
 import com.example.islab1new.models.User;
 import com.example.islab1new.dao.UserDAO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,18 +18,25 @@ public class AdminApprovalService {
     @Inject
     private UserDAO userDAO;
 
+    @Inject
+    private AdminRequestsDAO adminRequestsDAO;
+
     @Transactional
     public void approveAdminRequest(Integer userId) {
-        User user = userDAO.findById(userId);
-        if (user != null && !user.getRole().equals(User.ROLE_ADMIN)) {
-            user.setRole(User.ROLE_ADMIN);
-            userDAO.save(user);
-        } else {
-            throw new IllegalArgumentException("User is already an admin or not found");
-        }
+        AdminRequests adminRequest = adminRequestsDAO.findAdminRequestById(userId);
+        adminRequest.setStatus("APPROVED");
+        adminRequestsDAO.update(adminRequest);
+        adminRequest.getUser().setRole("ADMIN");
+        userDAO.save(adminRequest.getUser());
     }
 
-    public List<User> getPendingAdminRequests() {
-        return userDAO.findAll();
+    @Transactional
+    public void denyAdminRequest(Integer userId) {
+        AdminRequests adminRequest = adminRequestsDAO.findAdminRequestById(userId);
+        adminRequest.setStatus("DENIED");
+        adminRequestsDAO.update(adminRequest);
     }
+
+
+
 }

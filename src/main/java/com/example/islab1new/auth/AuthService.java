@@ -47,6 +47,7 @@ public class AuthService {
         return true;
     }
 
+
     public AuthenticationResponse loginUser(String username, String password) throws LoginException {
         User user = userDAO.findByUsername(username)
                 .orElseThrow(() -> new LoginException("Invalid credentials"));

@@ -20,16 +20,25 @@ public class UserService {
             return "Пароль должен быть уникальным";
         }
 
-        if (role.equals(User.ROLE_ADMIN) && hasAdmin()) {
-
-            // TODO: 29.10.2024  добавить логику добавления заявки в сервис ApprovalRequestService
-            return "Требуется одобрение существующего администратора";
+        if (User.ROLE_ADMIN.equals(role)) {
+            if (hasAdmin()) {
+                User user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
+                user.setRole(User.ROLE_USER);
+                userDAO.save(user);
+                return "Требуется одобрение существующего администратора";
+            }
         }
 
         User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
         userDAO.save(user);
         return "Пользователь успешно зарегистрирован";
     }
+
 
     public User getUser(Integer id) {
         return userDAO.findById(id);
