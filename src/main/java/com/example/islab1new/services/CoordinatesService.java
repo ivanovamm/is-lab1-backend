@@ -7,6 +7,7 @@ import com.example.islab1new.models.history.CoordinatesHistory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.io.InputStream;
 import java.util.List;
 
 @ApplicationScoped
@@ -37,6 +38,10 @@ public class CoordinatesService {
 
     public void removeCoordinates(Integer id, Integer userId) {
         coordinatesDAO.delete(id, userId);
+    }
+
+    public int importCoordinates(InputStream file, Integer userId) throws Exception {
+        return coordinatesDAO.importCoordinates(file, userId);
     }
 
 }

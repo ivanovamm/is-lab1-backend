@@ -1,15 +1,21 @@
 package com.example.islab1new.dao;
 
 
+import com.example.islab1new.models.Address;
 import com.example.islab1new.models.Coordinates;
 import com.example.islab1new.models.history.Action;
 import com.example.islab1new.models.history.AddressHistory;
 import com.example.islab1new.models.history.CoordinatesHistory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -81,6 +87,30 @@ public class CoordinatesDAO {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    @Transactional
+    public int importCoordinates(InputStream fileInputStream, Integer userId) throws Exception {
+        List<Coordinates> coordinates = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Coordinates[] importedCoordinates = objectMapper.readValue(fileInputStream, Coordinates[].class);
+            coordinates.addAll(Arrays.asList(importedCoordinates));
+
+            for (Coordinates coordinate : coordinates) {
+                coordinate.setCreatorId(userId);
+                coordinate.setCreationDate(LocalDateTime.now().toString());
+
+                save(coordinate, userId);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при чтении данных из файла: " + e.getMessage(), e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("Ошибка при импорте: " + e.getMessage(), e);
+        }
+        return coordinates.size();
     }
 
 }
