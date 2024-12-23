@@ -8,6 +8,7 @@ import jakarta.inject.Named;
 import com.example.islab1new.models.Organization;
 import com.example.islab1new.dao.OrganizationDAO;
 
+import java.io.InputStream;
 import java.util.List;
 @ApplicationScoped
 public class OrganizationService {
@@ -44,5 +45,9 @@ public class OrganizationService {
 
     public void removeOrganization(Integer id, Integer userId) {
         OrganizationDAO.delete(id, userId);
+    }
+
+    public int importOrganizations(InputStream file, Integer userId) throws Exception {
+        return OrganizationDAO.importOrganizations(file, userId);
     }
 }

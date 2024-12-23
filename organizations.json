@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Burger King",
+    "coordinates": {
+      "x": 132,
+      "y": 234
+    },
+    "officialAddress": {
+      "street": "Sadovaya"
+    },
+    "annualTurnover": 21232,
+    "employeesCount": 2323232,
+    "rating": 87,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "Lesnaya"
+    }
+  },
+  {
+    "name": "Evrasia",
+    "coordinates": {
+      "x": 1908,
+      "y": 21122
+    },
+    "officialAddress": {
+      "street": "Engelsa"
+    },
+    "annualTurnover": 21345,
+    "employeesCount": 899,
+    "rating": 12,
+    "type": "PUBLIC",
+    "postalAddress": {
+      "street": "Dumskaya"
+    }
+  },
+  {
+    "name": "SBER",
+    "coordinates": {
+      "x": 21331,
+      "y": 9876
+    },
+    "officialAddress": {
+      "street": "Sobornaya"
+    },
+    "annualTurnover": 876,
+    "employeesCount": 5436,
+    "rating": 76,
+    "type": "GOVERNMENT",
+    "postalAddress": {
+      "street": "Sportivnaya"
+    }
+  }
+
+]
