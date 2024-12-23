@@ -7,8 +7,10 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import com.example.islab1new.models.Address;
 import com.example.islab1new.dao.AddressDAO;
+import jakarta.servlet.http.Part;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.io.InputStream;
 import java.util.List;
 
 @ApplicationScoped
@@ -39,5 +41,9 @@ public class AddressService {
 
     public void removeAddress(Integer id, Integer userId) {
         AddressDAO.delete(id, userId);
+    }
+
+    public int importAddresses(InputStream file, Integer userId) throws Exception {
+        return AddressDAO.importAddresses(file, userId);
     }
 }

@@ -2,14 +2,22 @@ package com.example.islab1new.dao;
 
 import com.example.islab1new.models.history.Action;
 import com.example.islab1new.models.history.AddressHistory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import jakarta.persistence.*;
 import com.example.islab1new.models.Address;
+import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -83,4 +91,33 @@ public class AddressDAO {
             throw e;
         }
     }
+
+
+    @Transactional
+    public int importAddresses(InputStream fileInputStream, Integer userId) throws Exception {
+        List<Address> addresses = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Address[] importedAddresses = objectMapper.readValue(fileInputStream, Address[].class);
+
+            addresses.addAll(Arrays.asList(importedAddresses));
+
+            for (Address address : addresses) {
+                address.setCreatorId(userId);
+                address.setCreationDate(LocalDateTime.now().toString());
+
+                save(address, userId);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при чтении данных из файла: " + e.getMessage(), e);
+        } catch (Exception e) {
+
+            throw new RuntimeException("Ошибка при импорте: " + e.getMessage(), e);
+        }
+        return addresses.size();
+    }
+
+
+
 }

@@ -73,13 +73,10 @@ public class AuthService {
 
     public String getRoleFromToken(String token) {
         try {
-            // Декодируем JWT токен
             DecodedJWT decodedJWT = JWT.decode(token);
 
-            // Извлекаем роль из токена
             String role = decodedJWT.getClaim("role").asString();
 
-            // Проверяем, если роль пустая, выбрасываем исключение
             if (role == null) {
                 throw new NotAuthorizedException("Role not found in token");
             }

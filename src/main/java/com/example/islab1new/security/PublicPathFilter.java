@@ -14,7 +14,7 @@ public class PublicPathFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Инициализация фильтра, если необходимо
+
     }
 
     @Override
@@ -25,9 +25,8 @@ public class PublicPathFilter implements Filter {
 
         String path = httpRequest.getRequestURI();
 
-        // Публичные пути
         if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register")) {
-            chain.doFilter(request, response); // Разрешаем доступ
+            chain.doFilter(request, response);
         } else {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
@@ -35,6 +34,6 @@ public class PublicPathFilter implements Filter {
 
     @Override
     public void destroy() {
-        // Очистка ресурсов фильтра, если необходимо
+
     }
 }
