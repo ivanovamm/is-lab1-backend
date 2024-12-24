@@ -118,7 +118,6 @@ public class OrganizationDAO {
         try {
             Organization[] importedOrganizations = objectMapper.readValue(fileInputStream, Organization[].class);
             organizations.addAll(Arrays.asList(importedOrganizations));
-
             for (Organization organization : organizations) {
 
                 if (organizationNames.contains(organization.getName())){
@@ -173,7 +172,7 @@ public class OrganizationDAO {
             throw new RuntimeException("Ошибка при импорте: " + e.getMessage(), e);
         }
 
-        return organizations.size();
+        return organizationNames.size();
     }
 
 

@@ -108,4 +108,6 @@ public class AuthController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to deny admin request").build();
         }
     }
+
+
 }

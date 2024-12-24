@@ -34,6 +34,20 @@ public class UserController {
         }
     }
 
+    @GET
+    @Path("/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByName(@PathParam("username") String username) {
+        User user = userService.getUserByName(username);
+        if (user != null) {
+            return Response.ok(user).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
