@@ -15,9 +15,7 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Named
 @RequestScoped
@@ -116,13 +114,19 @@ public class OrganizationDAO {
     public int importOrganizations(InputStream fileInputStream, Integer userId) throws Exception {
         List<Organization> organizations = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
-
+        Set<String> organizationNames = new HashSet<>();
         try {
             Organization[] importedOrganizations = objectMapper.readValue(fileInputStream, Organization[].class);
             organizations.addAll(Arrays.asList(importedOrganizations));
 
             for (Organization organization : organizations) {
 
+                if (organizationNames.contains(organization.getName())){
+                    System.out.println("Имена организаций должны быть уникальными");
+                    continue;
+                }
+
+                organizationNames.add(organization.getName());
                 organization.setCreatorId(userId);
                 organization.setCreationDate(LocalDateTime.now().toString());
 

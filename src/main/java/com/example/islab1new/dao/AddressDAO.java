@@ -2,6 +2,8 @@ package com.example.islab1new.dao;
 
 import com.example.islab1new.models.history.Action;
 import com.example.islab1new.models.history.AddressHistory;
+import com.example.islab1new.models.history.ImportHistory;
+import com.example.islab1new.models.history.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -16,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @ApplicationScoped
 public class AddressDAO {
@@ -93,31 +93,51 @@ public class AddressDAO {
     }
 
 
+    //todo продебажить!!!
     @Transactional
     public int importAddresses(InputStream fileInputStream, Integer userId) throws Exception {
         List<Address> addresses = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
+        int importCount;
+
+        ImportHistory importHistory = new ImportHistory();
+        importHistory.setStatus(Status.FAILED);
+        importHistory.setImportCount(0);
+        importHistory.setUserId(userId);
+        em.persist(importHistory);
+
 
         try {
             Address[] importedAddresses = objectMapper.readValue(fileInputStream, Address[].class);
-
             addresses.addAll(Arrays.asList(importedAddresses));
+            Set<String> streets = new HashSet<>();
+            importCount = addresses.size();
 
             for (Address address : addresses) {
+                if (streets.contains(address.getStreet())){
+                    importCount -= 1;
+                    System.out.println("Названия улиц должны быть уникальными");
+                    continue;
+                }
+                streets.add(address.getStreet());
                 address.setCreatorId(userId);
                 address.setCreationDate(LocalDateTime.now().toString());
-
                 save(address, userId);
             }
+
+            importHistory.setStatus(Status.SUCCESS);
+            importHistory.setImportCount(addresses.size());
+            em.merge(importHistory);
+
         } catch (IOException e) {
+
             throw new RuntimeException("Ошибка при чтении данных из файла: " + e.getMessage(), e);
+
         } catch (Exception e) {
 
             throw new RuntimeException("Ошибка при импорте: " + e.getMessage(), e);
         }
-        return addresses.size();
+
+        return importCount;
     }
-
-
-
 }
